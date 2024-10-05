@@ -1,158 +1,176 @@
 import java.util.Random;
 import java.util.Scanner;
 
-public class BLACKJACK {
-
-    static Scanner scanner = new Scanner(System.in);
-    static Random random = new Random();
-
-    // Game Variables
-    static int wager = 0;
-    static int houseLimit = 500;
+public class Blackjack {
     static int[] deck = new int[52];
     static int[] playerHand = new int[5];
     static int[] dealerHand = new int[5];
-    static int playerTotal = 0;
-    static int dealerTotal = 0;
-
+    static int wager;
+    static Random random = new Random();
+    static Scanner scanner = new Scanner(System.in);
+    
     public static void main(String[] args) {
-        System.out.println("DO YOU WANT INSTRUCTIONS? (IF SO, TYPE 1)");
-        int k = scanner.nextInt();
-
-        if (k == 1) {
-            showInstructions();
+        boolean playAgain = true;
+        
+        while (playAgain) {
+            System.out.println("DO YOU WANT INSTRUCTIONS (IF SO, TYPE 'I')?");
+            String input = scanner.nextLine();
+            
+            if (input.equalsIgnoreCase("I")) {
+                printInstructions();
+            }
+            
+            resetGame();
+            playHand();
+            
+            System.out.println("Do you want to play again? (Y/N)");
+            playAgain = scanner.nextLine().equalsIgnoreCase("Y");
         }
-
-        initializeGame();
-        playGame();
     }
-
-    public static void showInstructions() {
-        System.out.println("THIS IS A GAME OF BLACKJACK - LAS VEGAS STYLE.");
-        System.out.println("HERE ARE THE RULES OF THE HOUSE. THE DEALER");
-        System.out.println("MUST HIT ON 16 OR LESS AND MUST STAY ON 17 OR MORE.");
-        System.out.println("YOU MAY SPLIT TWO CARDS IF THEY ARE THE SAME.");
-        System.out.println("ALSO, YOU MAY DOUBLE YOUR BET AND RECEIVE EXACTLY ONE MORE CARD.");
-        System.out.println("WHEN THE DEALER HAS AN EXPOSED ACE, HE WILL ASK YOU FOR AN INSURANCE BET.");
-        System.out.println("AN INSURANCE BET RISKS HALF YOUR BET FOR A WIN IF THE DEALER HAS BLACKJACK.");
-        System.out.println("THE HOUSE LIMIT IS $500.");
-        System.out.println("GOOD LUCK!");
+    
+    public static void printInstructions() {
+        System.out.println("This is a game of Blackjack. Las Vegas style.");
+        System.out.println("The dealer must hit on 16 or less and stay on 17 or more.");
+        System.out.println("You may split two cards if they are the same and play one hand with each.");
+        System.out.println("You may double your bet and receive exactly one more card any time on your first hit.");
+        System.out.println("Typing instructions are: 0 - No hit, 1 - Hit, 2 - Double, 3 - Split a pair.");
     }
-
-    public static void initializeGame() {
+    
+    public static void resetGame() {
         for (int i = 0; i < deck.length; i++) {
-            deck[i] = 0;
+            deck[i] = i % 13 + 1;  // Values between 1 and 13 (representing cards)
         }
-        playerTotal = 0;
-        dealerTotal = 0;
+        shuffleDeck();
     }
-
-    public static void playGame() {
-        while (true) {
-            System.out.println("WAGER?");
-            wager = scanner.nextInt();
-
-            if (wager > houseLimit) {
-                System.out.println("THAT'S TOO MUCH - HOUSE LIMIT IS $500.");
-                continue;
-            }
-
-            System.out.println("OK, HERE IS THE FIRST HAND.");
-            dealCards();
-
-            System.out.println("YOUR TOTAL IS: " + playerTotal);
-            System.out.println("DEALER SHOWS: " + dealerHand[0]);
-
-            if (playerTotal == 21) {
-                System.out.println("BLACKJACK! YOU WIN!");
-                return;
-            }
-
+    
+    public static void shuffleDeck() {
+        for (int i = 0; i < deck.length; i++) {
+            int swapIndex = random.nextInt(deck.length);
+            int temp = deck[i];
+            deck[i] = deck[swapIndex];
+            deck[swapIndex] = temp;
+        }
+    }
+    
+    public static void playHand() {
+        System.out.println("Place your wager:");
+        wager = scanner.nextInt();
+        scanner.nextLine();  // consume newline
+        
+        if (wager > 500) {
+            System.out.println("That's too much - House limit is $500.");
+            return;
+        }
+        
+        System.out.println("Dealing cards...");
+        dealCards();
+        
+        // Game logic for player and dealer turns
+        if (playerTotal() == 21) {
+            System.out.println("Blackjack! You win!");
+        } else {
             playerTurn();
             dealerTurn();
-            checkWinner();
         }
+        
+        determineWinner();
     }
-
+    
     public static void dealCards() {
-        for (int i = 0; i < 2; i++) {
-            playerHand[i] = drawCard();
-            dealerHand[i] = drawCard();
-        }
-        playerTotal = calculateHandTotal(playerHand);
-        dealerTotal = calculateHandTotal(dealerHand);
+        playerHand[0] = drawCard();
+        playerHand[1] = drawCard();
+        dealerHand[0] = drawCard();
+        dealerHand[1] = drawCard();
+        
+        System.out.println("Your first card: " + cardString(playerHand[0]));
+        System.out.println("Your second card: " + cardString(playerHand[1]));
+        System.out.println("Dealer shows: " + cardString(dealerHand[0]));
     }
-
+    
     public static int drawCard() {
-        return random.nextInt(13) + 1; // Simulate card from 1 to 13 (Ace to King)
+        int cardIndex = random.nextInt(deck.length);
+        int card = deck[cardIndex];
+        deck[cardIndex] = 0;  // Mark the card as used
+        return card;
     }
-
-    public static int calculateHandTotal(int[] hand) {
-        int total = 0;
-        for (int card : hand) {
-            if (card == 1) {
-                total += (total + 11 <= 21) ? 11 : 1;
-            } else if (card >= 10) {
-                total += 10;
-            } else {
-                total += card;
-            }
+    
+    public static String cardString(int card) {
+        switch (card) {
+            case 1: return "Ace";
+            case 11: return "Jack";
+            case 12: return "Queen";
+            case 13: return "King";
+            default: return String.valueOf(card);
         }
-        return total;
     }
-
+    
+    public static int playerTotal() {
+        return cardValue(playerHand[0]) + cardValue(playerHand[1]);
+    }
+    
+    public static int cardValue(int card) {
+        if (card > 10) return 10;  // Jack, Queen, King are all worth 10
+        return card;
+    }
+    
     public static void playerTurn() {
-        boolean playerDone = false;
-        while (!playerDone) {
-            System.out.println("WHAT WILL YOU DO? (0: STAY, 1: HIT, 2: DOUBLE)");
-            int choice = scanner.nextInt();
-
-            if (choice == 1) {
+        boolean playerBusted = false;
+        int total = playerTotal();
+        
+        while (total < 21) {
+            System.out.println("Your total is " + total + ". Hit (1) or Stand (0)?");
+            int action = scanner.nextInt();
+            scanner.nextLine();  // consume newline
+            
+            if (action == 1) {
                 int newCard = drawCard();
-                System.out.println("YOU DREW A: " + newCard);
-                playerTotal += calculateHandTotal(new int[]{newCard});
-                System.out.println("YOUR TOTAL IS NOW: " + playerTotal);
-
-                if (playerTotal > 21) {
-                    System.out.println("BUSTED! YOU LOSE.");
-                    playerDone = true;
-                }
-            } else if (choice == 2) {
-                wager *= 2;
-                int newCard = drawCard();
-                System.out.println("YOU DOUBLED AND DREW A: " + newCard);
-                playerTotal += calculateHandTotal(new int[]{newCard});
-                System.out.println("YOUR TOTAL IS NOW: " + playerTotal);
-                playerDone = true;
+                System.out.println("You drew: " + cardString(newCard));
+                total += cardValue(newCard);
             } else {
-                playerDone = true;
+                break;
+            }
+            
+            if (total > 21) {
+                System.out.println("You busted with " + total + "!");
+                playerBusted = true;
+                break;
             }
         }
-    }
-
-    public static void dealerTurn() {
-        System.out.println("DEALER'S TURN.");
-        System.out.println("DEALER TOTAL IS: " + dealerTotal);
-
-        while (dealerTotal < 17) {
-            int newCard = drawCard();
-            System.out.println("DEALER DREW A: " + newCard);
-            dealerTotal += calculateHandTotal(new int[]{newCard});
-            System.out.println("DEALER'S TOTAL IS NOW: " + dealerTotal);
+        
+        if (!playerBusted) {
+            System.out.println("You stand with " + total + ".");
         }
     }
-
-    public static void checkWinner() {
-        if (playerTotal > 21) {
-            System.out.println("YOU BUSTED! DEALER WINS.");
-        } else if (dealerTotal > 21) {
-            System.out.println("DEALER BUSTED! YOU WIN.");
-        } else if (playerTotal > dealerTotal) {
-            System.out.println("YOU WIN! CONGRATULATIONS!");
-        } else if (dealerTotal > playerTotal) {
-            System.out.println("DEALER WINS! BETTER LUCK NEXT TIME.");
+    
+    public static void dealerTurn() {
+        int total = cardValue(dealerHand[0]) + cardValue(dealerHand[1]);
+        System.out.println("Dealer's hidden card: " + cardString(dealerHand[1]));
+        
+        while (total < 17) {
+            int newCard = drawCard();
+            System.out.println("Dealer draws: " + cardString(newCard));
+            total += cardValue(newCard);
+        }
+        
+        if (total > 21) {
+            System.out.println("Dealer busted with " + total + "!");
         } else {
-            System.out.println("IT'S A TIE!");
+            System.out.println("Dealer stands with " + total + ".");
+        }
+    }
+    
+    public static void determineWinner() {
+        int playerTotal = cardValue(playerHand[0]) + cardValue(playerHand[1]);
+        int dealerTotal = cardValue(dealerHand[0]) + cardValue(dealerHand[1]);
+        
+        if (playerTotal > 21) {
+            System.out.println("You lose.");
+        } else if (dealerTotal > 21 || playerTotal > dealerTotal) {
+            System.out.println("You win!");
+        } else if (playerTotal == dealerTotal) {
+            System.out.println("It's a tie!");
+        } else {
+            System.out.println("Dealer wins.");
         }
     }
 }
