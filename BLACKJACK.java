@@ -1,7 +1,21 @@
+/*
+ * Blackjack Game - Java Version
+ * 
+ * This is a simple command-line implementation of Blackjack (Las Vegas style).
+ * The player can place a wager, and the game proceeds with standard Blackjack rules.
+ * The dealer hits on 16 or less and stands on 17 or more.
+ * Players can split a pair, double their bet, or choose to hit or stand.
+ * The player wins if they get a higher total than the dealer without busting.
+ *
+ * Author: Mikael Amare
+ * Date: 2024-10-22
+ * Version: 1.0
+*/
+
 import java.util.Random;
 import java.util.Scanner;
 
-public class Blackjack {
+public class BLACKJACK {
     static int[] deck = new int[52];
     static int[] playerHand = new int[5];
     static int[] dealerHand = new int[5];
