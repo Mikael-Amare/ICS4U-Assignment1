@@ -1,0 +1,103 @@
+<mxfile>
+  <diagram name="Blackjack Game Flowchart">
+    <mxGraphModel dx="1466" dy="806" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Start -->
+        <mxCell id="start" value="Start" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="50" width="100" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Game Initialization -->
+        <mxCell id="init" value="Initialize Game" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="150" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Place Wager -->
+        <mxCell id="wager" value="Place Wager" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="250" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Deal Cards -->
+        <mxCell id="deal" value="Deal Cards" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="350" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Check for Blackjack -->
+        <mxCell id="blackjack" value="Check for Blackjack" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="450" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Player Decision -->
+        <mxCell id="decision" value="Player Action (Hit, Stand, Double, Split)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="550" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Dealer Turn -->
+        <mxCell id="dealer" value="Dealer Turn" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="550" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Determine Winner -->
+        <mxCell id="winner" value="Determine Winner" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="650" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Play Again -->
+        <mxCell id="playAgain" value="Play Again?" style="diamond;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="750" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- End -->
+        <mxCell id="end" value="End Game" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="850" width="100" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Connections -->
+        <mxCell id="start-init" edge="1" source="start" target="init" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="init-wager" edge="1" source="init" target="wager" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="wager-deal" edge="1" source="wager" target="deal" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="deal-blackjack" edge="1" source="deal" target="blackjack" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="blackjack-decision" edge="1" source="blackjack" target="decision" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="decision-dealer" edge="1" source="decision" target="dealer" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dealer-winner" edge="1" source="dealer" target="winner" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="winner-playAgain" edge="1" source="winner" target="playAgain" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="playAgain-end" edge="1" source="playAgain" target="end" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="playAgain-init" edge="1" source="playAgain" target="init" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+          <mxPoint as="sourcePoint" x="250" y="750" />
+          <mxPoint as="targetPoint" x="250" y="150" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
