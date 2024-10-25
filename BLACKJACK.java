@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Blackjack Game - Java Version
  * 
@@ -11,6 +12,9 @@
  * Date: 2024-10-22
  * Version: 1.0
 */
+=======
+
+>>>>>>> 2918d4e099575637f7e287ad57cb36b428d29f3e
 
 import java.util.Random;
 import java.util.Scanner;
