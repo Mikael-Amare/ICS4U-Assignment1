@@ -36,15 +36,15 @@ class Blackjack {
         this.dealerHand = [];
 
         if (this.deck.length < 15) {
-            this.deck = Array.from({ length: 52 }, (_, i) => (i % 13) + 1); // Values 1-13
+            this.deck = Array.from({ length: 52 }, (_, counter) => (counter % 13) + 1); // Values 1-13
             this.shuffleDeck();
         }
     }
 
     static shuffleDeck(): void {
-        for (let i = 0; i < this.deck.length; i++) {
+        for (let counter = 0; counter < this.deck.length; counter) {
             const swapIndex = Math.floor(Math.random() * this.deck.length);
-            [this.deck[i], this.deck[swapIndex]] = [this.deck[swapIndex], this.deck[i]];
+            [this.deck[counter], this.deck[swapIndex]] = [this.deck[swapIndex], this.deck[counter]];
         }
     }
 
