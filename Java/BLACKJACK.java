@@ -76,46 +76,7 @@ public class BLACKJACK {
             deck[swapIndex] = temp;
         }
     }
-    
-    public static void playerTurn() {
-        boolean playerBusted = false;
-        int total = playerTotal();
-
-        while (total < 21) {
-            try {
-                System.out.println("Your total is " + total + ". Hit (1) or Stand (0)?");
-                int action = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-
-                if (action == 1) {
-                    int newCard = drawCard();
-                    System.out.println("You drew: " + cardString(newCard));
-                    total += cardValue(newCard);
-                } else if (action == 0) {
-                    break;
-                } else {
-                    System.out.println("Invalid action! Enter 1 to Hit or 0 to Stand.");
-                }
-
-                if (total > 21) {
-                    System.out.println("You busted with " + total + "!");
-                    playerBusted = true;
-                    break;
-                }
-            } catch (Exception e) {
-                System.out.println("Invalid input! Please enter 1 to Hit or 0 to Stand.");
-                scanner.nextLine(); // Clear the invalid input
-            }
-        }
-
-        if (!playerBusted) {
-            System.out.println("You stand with " + total + ".");
-        }
-    }
         
-        determineWinner();
-    }
-    
     public static void dealCards() {
         playerHand[0] = drawCard();
         playerHand[1] = drawCard();
@@ -154,6 +115,50 @@ public class BLACKJACK {
         return card;
     }
     
+    public static void playHand() {
+        boolean validWager = false;
+
+        // Place the wager
+        while (!validWager) {
+            try {
+                System.out.println("\nPlace your wager:");
+                wager = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                if (wager > playerBalance) {
+                    System.out.println("\nYou cannot wager more than your balance! Current balance: $" + playerBalance);
+                } else if (wager <= 0) {
+                    System.out.println("\nWager must be greater than zero!");
+                } else if (wager > 500) {
+                    System.out.println("\nThat's too much - House limit is $500.");
+                } else {
+                    validWager = true; // Wager is valid
+                }
+            } catch (Exception e) {
+                System.out.println("\nInvalid input! Please enter a valid wager as a whole number.");
+                scanner.nextLine(); // Clear the invalid input
+            }
+        }
+
+        // Deal cards and check for Blackjack
+        System.out.println("\nDealing cards...");
+        dealCards();
+        if (playerTotal() == 21 && playerHand[2] == 0) {
+            System.out.println("\nBlackjack! You win!");
+            playerBalance += wager * 1.5;
+            return;
+        }
+
+        // Player's turn
+        playerTurn();
+
+        // Dealer's turn
+        dealerTurn();
+
+        // Determine winner
+        determineWinner();
+    }
+
     public static void playerTurn() {
         boolean playerBusted = false;
         int total = playerTotal();
@@ -178,6 +183,11 @@ public class BLACKJACK {
                 total += cardValue(newCard);
                 break; // Ends the turn after doubling down
             }
+
+            if (action == 3) {
+                splitPair();
+            }
+            
 
             if (total > 21) {
                 System.out.println("You busted with " + total + "!");
