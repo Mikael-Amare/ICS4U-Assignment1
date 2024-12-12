@@ -1,4 +1,3 @@
-class Blackjack {
     static deck: number[] = [];
     static playerHand: number[] = [];
     static dealerHand: number[] = [];
@@ -49,7 +48,7 @@ class Blackjack {
     }
 
     static playHand(): void {
-        console.log(`Current balance: $${this.playerBalance}. Place your wager:`);
+        console.log(Current balance: $${this.playerBalance}. Place your wager:`);
         const wagerInput = prompt("Enter wager:");
         this.wager = parseInt(wagerInput || "0");
         this.dealCards();
@@ -76,87 +75,91 @@ class Blackjack {
     }
 
     static drawCard(): number {
-        return this.deck.splice(Math.floor(Math.random() * this.deck.length), 1)[0];
+        return this.deck.pop() || 0; // Safety check if deck is empty
     }
 
-    static cardString(card: number): string {
-        return card === 1 ? "Ace" : card === 11 ? "Jack" : card === 12 ? "Queen" : card === 13 ? "King" : card.toString();
+    static cardString(cardValue: number): string {
+        const cardNames = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"];
+        return cardNames[(cardValue - 1) % 13];
     }
 
     static calculateHandValue(hand: number[]): number {
-        let total = hand.reduce((sum, card) => sum + (card > 10 ? 10 : card), 0);
-        let aces = hand.filter(card => card === 1).length;
+        let value = 0;
+        let aces = 0;
 
-        while (total <= 11 && aces > 0) {
-            total += 10;
+        for (const card of hand) {
+            if (card > 10) {
+                value += 10; // Face cards are worth 10
+            } else if (card === 1) {
+                aces++;
+                value += 11; // Initially count Ace as 11
+            } else {
+                value += card;
+            }
+        }
+
+        while (value > 21 && aces > 0) {
+            value -= 10; // Convert Ace from 11 to 1
             aces--;
         }
-        return total;
+
+        return value;
     }
 
     static playerTurn(): void {
-        let playerBusted = false;
+        while (true) {
+            console.log("Your hand:", this.playerHand.map(this.cardString).join(", "));
+            console.log("Your hand value:", this.calculateHandValue(this.playerHand));
 
-        while (this.calculateHandValue(this.playerHand) < 21) {
-            console.log("Your total is", this.calculateHandValue(this.playerHand), "- Hit (1), Stand (0), or Double (2)");
-            const actionInput = prompt("Enter action:");
-            const action = parseInt(actionInput || "0");
-
-            if (action === 1) {
-                const newCard = this.drawCard();
-                console.log("You drew:", this.cardString(newCard));
-                this.playerHand.push(newCard);
-            } else if (action === 2) {
-                this.wager *= 2;
-                console.log("You doubled down.");
+            const choice = prompt("Enter 0 to Stay, 1 to Hit, or 2 to Double:");
+            if (choice === "0") {
+                console.log("You chose to stay.");
+                break;
+            } else if (choice === "1") {
                 this.playerHand.push(this.drawCard());
+                console.log("You hit and drew a card.");
+                if (this.calculateHandValue(this.playerHand) > 21) {
+                    console.log("You busted!");
+                    break;
+                }
+            } else if (choice === "2") {
+                console.log("You chose to double down.");
+                this.wager *= 2;
+                this.playerHand.push(this.drawCard());
+                console.log("Your hand:", this.playerHand.map(this.cardString).join(", "));
                 break;
             } else {
-                break;
-            }
-
-            if (this.calculateHandValue(this.playerHand) > 21) {
-                console.log("You busted with", this.calculateHandValue(this.playerHand));
-                playerBusted = true;
-                break;
+                console.log("Invalid input. Please try again.");
             }
         }
-
-        if (!playerBusted) console.log("You stand with", this.calculateHandValue(this.playerHand));
     }
 
     static dealerTurn(): void {
-        let dealerTotal = this.calculateHandValue(this.dealerHand);
-        console.log("Dealer's hidden card:", this.cardString(this.dealerHand[1]));
-
-        while (dealerTotal < 17) {
-            const newCard = this.drawCard();
-            console.log("Dealer draws:", this.cardString(newCard));
-            this.dealerHand.push(newCard);
-            dealerTotal = this.calculateHandValue(this.dealerHand);
+        console.log("Dealer's turn. Dealer reveals:", this.cardString(this.dealerHand[1]));
+        while (this.calculateHandValue(this.dealerHand) < 17) {
+            this.dealerHand.push(this.drawCard());
+            console.log("Dealer hits and draws a card.");
         }
 
-        console.log(dealerTotal > 21 ? "Dealer busted!" : "Dealer stands with " + dealerTotal);
+        console.log("Dealer's hand:", this.dealerHand.map(this.cardString).join(", "));
+        console.log("Dealer's hand value:", this.calculateHandValue(this.dealerHand));
     }
-
 
     static determineWinner(): void {
-        const playerTotal = this.calculateHandValue(this.playerHand);
-        const dealerTotal = this.calculateHandValue(this.dealerHand);
+        const playerValue = this.calculateHandValue(this.playerHand);
+        const dealerValue = this.calculateHandValue(this.dealerHand);
 
-        if (playerTotal > 21) {
-            console.log("You lose.");
+        if (playerValue > 21) {
+            console.log("You busted! Dealer wins.");
             this.playerBalance -= this.wager;
-        } else if (dealerTotal > 21 || playerTotal > dealerTotal) {
+        } else if (dealerValue > 21 || playerValue > dealerValue) {
             console.log("You win!");
             this.playerBalance += this.wager;
-        } else if (playerTotal === dealerTotal) {
-            console.log("It's a tie!");
-        } else {
+        } else if (playerValue < dealerValue) {
             console.log("Dealer wins.");
             this.playerBalance -= this.wager;
+        } else {
+            console.log("It's a tie!");
         }
     }
-}
-
-Blackjack.main();
+`
